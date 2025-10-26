@@ -1,0 +1,10 @@
+fontlist\DMSans_18pt-Regular.ttf
+fontlist\Lora-VariableFont_wght.ttf
+fontlist\Merriweather-VariableFont_opsz,wght.ttf
+fontlist\Montserrat-Regular.ttf
+fontlist\Nunito-VariableFont_wght.ttf
+fontlist\OpenSans-VariableFont_wdth,wght.ttf
+fontlist\PlayfairDisplay-Italic-VariableFont_wght.ttf
+fontlist\PlayfairDisplay-VariableFont_wght.ttf
+fontlist\Poppins-Light.ttf
+fontlist\Roboto-VariableFont_wdth,wght.ttf
