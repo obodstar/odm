@@ -1,12 +1,22 @@
-import os
+import os,sys
 import random
 from PIL import Image, ImageDraw, ImageFont
+
+if "linux" in sys.platform.lower():
+    try:os.system("clear")
+    except:pass
+elif "win" in sys.platform.lower():
+    try:os.system("cls")
+    except:pass
+else:
+    try:os.system("clear")
+    except:pass
 
 # === Pengaturan awal ===
 template_path = "template.png"
 font_folder = "fontlist"
 fontlist_file = "fontlist.txt"
-quotes_file = "quotes.txt"
+teks_file = "teks.txt"
 output_folder = "output"
 
 pembuat = "Script Buat Desain Massal | Created By Obod AF"
@@ -32,19 +42,19 @@ if not os.path.exists(template_path):
     img.save(template_path)
     print("✅ template.png otomatis dibuat (putih polos).")
 
-# === Buat file quotes.txt jika belum ada ===
-if not os.path.exists(quotes_file):
-    with open(quotes_file, "w", encoding="utf-8") as f:
-        f.write("Contoh quote pertama.\nContoh quote kedua.")
-    print("✅ quotes.txt otomatis dibuat, silakan isi dengan teks quotes Anda.")
+# === Buat file teks.txt jika belum ada ===
+if not os.path.exists(teks_file):
+    with open(teks_file, "w", encoding="utf-8") as f:
+        f.write("Contoh tek pertama.\nContoh tek kedua.")
+    print("✅ teks.txt otomatis dibuat, silakan isi dengan teks teks Anda.")
     exit()
 
-# === Baca semua quotes dari file ===
-with open(quotes_file, "r", encoding="utf-8") as f:
-    quotes = [q.strip() for q in f.readlines() if q.strip()]
+# === Baca semua teks dari file ===
+with open(teks_file, "r", encoding="utf-8") as f:
+    teks = [q.strip() for q in f.readlines() if q.strip()]
 
-if not quotes:
-    print("⚠️  File quotes.txt kosong! Silakan isi beberapa quotes dulu.")
+if not teks:
+    print("⚠️  File teks.txt kosong! Silakan isi beberapa teks dulu.")
     exit()
 
 # === Cek daftar font ===
@@ -124,7 +134,7 @@ def buat_desain(teks, index):
     print(f"✅ Selesai: {output_path}")
 
 # === Jalankan looping ===
-for i, quote in enumerate(quotes):
-    buat_desain(quote, i)
+for i, tek in enumerate(teks):
+    buat_desain(tek, i)
 
 print("\n🎉 Semua desain berhasil dibuat di folder 'output'!")
