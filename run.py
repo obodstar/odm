@@ -129,7 +129,7 @@ def buat_desain(teks, index):
 
     # Simpan hasil
     random_num = random.randint(1000, 9999)
-    output_path = os.path.join(output_folder, f"quotes_{random_num}.png")
+    output_path = os.path.join(output_folder, f"teks_{random_num}.png")
     hasil.save(output_path)
     print(f"✅ Selesai: {output_path}")
 
