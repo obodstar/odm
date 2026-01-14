@@ -1,140 +1,157 @@
-import os,sys
+import os, sys
 import random
 from PIL import Image, ImageDraw, ImageFont
 
-if "linux" in sys.platform.lower():
-    try:os.system("clear")
-    except:pass
-elif "win" in sys.platform.lower():
-    try:os.system("cls")
-    except:pass
+# === Clear terminal ===
+if "win" in sys.platform.lower():
+    os.system("cls")
 else:
-    try:os.system("clear")
-    except:pass
+    os.system("clear")
 
 # === Pengaturan awal ===
-template_path = "template.png"
+template_folder = "template"
 font_folder = "fontlist"
 fontlist_file = "fontlist.txt"
 teks_file = "teks.txt"
 output_folder = "output"
 
 pembuat = "Script Buat Desain Massal | Created By Obod AF"
-            
 print(pembuat)
 
-# === Input ukuran font dari pengguna ===
+# === Input ukuran font ===
 try:
     font_size = int(input("Masukkan ukuran font (misal: 48): ") or 48)
 except ValueError:
     font_size = 48
 
-# Warna teks default hitam
 text_color = (0, 0, 0)
 
-# === Pastikan folder dan file penting ada ===
+# === Pastikan folder ada ===
 os.makedirs(output_folder, exist_ok=True)
 os.makedirs(font_folder, exist_ok=True)
+os.makedirs(template_folder, exist_ok=True)
 
-# === Buat template putih jika belum ada ===
-if not os.path.exists(template_path):
-    img = Image.new("RGBA", (1080, 1080), (255, 255, 255, 255))
-    img.save(template_path)
-    print("✅ template.png otomatis dibuat (putih polos).")
+# === DETEKSI TEMPLATE ===
+templates = [
+    f for f in os.listdir(template_folder)
+    if f.lower().endswith((".png", ".jpg", ".jpeg"))
+]
 
-# === Buat file teks.txt jika belum ada ===
+if not templates:
+    print("❌ Tidak ada template ditemukan di folder 'template'")
+    print("➡️  Masukkan file gambar template terlebih dahulu.")
+    exit()
+
+# === MENU PILIH TEMPLATE ===
+print("\n📂 Daftar Template:")
+for i, t in enumerate(templates, start=1):
+    print(f"{i}. {t}")
+
+try:
+    pilihan = int(input("\nPilih nomor template yang ingin digunakan: "))
+    if pilihan < 1 or pilihan > len(templates):
+        raise ValueError
+except ValueError:
+    print("❌ Pilihan tidak valid.")
+    exit()
+
+template_path = os.path.join(template_folder, templates[pilihan - 1])
+print(f"\n✅ Template dipilih: {templates[pilihan - 1]}")
+
+# === Buat teks.txt jika belum ada ===
 if not os.path.exists(teks_file):
     with open(teks_file, "w", encoding="utf-8") as f:
-        f.write("Contoh tek pertama.\nContoh tek kedua.")
-    print("✅ teks.txt otomatis dibuat, silakan isi dengan teks teks Anda.")
+        f.write("Contoh teks pertama.\nContoh teks kedua.")
+    print("✅ teks.txt dibuat otomatis, silakan isi teks Anda.")
     exit()
 
-# === Baca semua teks dari file ===
+# === Baca teks ===
 with open(teks_file, "r", encoding="utf-8") as f:
-    teks = [q.strip() for q in f.readlines() if q.strip()]
+    teks_list = [t.strip() for t in f.readlines() if t.strip()]
 
-if not teks:
-    print("⚠️  File teks.txt kosong! Silakan isi beberapa teks dulu.")
+if not teks_list:
+    print("⚠️  teks.txt kosong!")
     exit()
 
-# === Cek daftar font ===
-# Jika fontlist.txt belum ada, buat otomatis berdasarkan isi folder fontlist
+# === Buat fontlist otomatis jika belum ada ===
 if not os.path.exists(fontlist_file):
-    all_fonts = [os.path.join(font_folder, f) for f in os.listdir(font_folder) if f.lower().endswith(".ttf")]
+    fonts = [
+        os.path.join(font_folder, f)
+        for f in os.listdir(font_folder)
+        if f.lower().endswith(".ttf")
+    ]
     with open(fontlist_file, "w", encoding="utf-8") as f:
-        for font_path in all_fonts:
-            f.write(font_path + "\n")
-    print(f"✅ fontlist.txt dibuat otomatis dengan {len(all_fonts)} font dari folder '{font_folder}'.")
+        for font in fonts:
+            f.write(font + "\n")
+    print(f"✅ fontlist.txt dibuat otomatis ({len(fonts)} font).")
 
-# Baca daftar font dari fontlist.txt
+# === Baca fontlist ===
 with open(fontlist_file, "r", encoding="utf-8") as f:
-    fonts_list = [line.strip() for line in f.readlines() if line.strip()]
+    fonts_list = [l.strip() for l in f if l.strip()]
 
 if not fonts_list:
-    print("❌ Tidak ada font ditemukan! Pastikan file .ttf ada di folder 'fontlist'.")
+    print("❌ Tidak ada font ditemukan!")
     exit()
 
-# === Fungsi utama ===
+# === FUNGSI DESAIN ===
 def buat_desain(teks, index):
     img = Image.open(template_path).convert("RGBA")
     width, height = img.size
 
-    # Pilih font acak
     font_path = random.choice(fonts_list)
     try:
-        full_font_path = os.path.abspath(os.path.join(os.getcwd(), font_path))
-        font = ImageFont.truetype(full_font_path, font_size)
+        font = ImageFont.truetype(font_path, font_size)
     except OSError:
-        print(f"⚠️  Font gagal dibuka: {font_path}")
+        print(f"⚠️ Font gagal dibuka: {font_path}")
         return
 
-    print(f"🎨 Menggunakan font: {os.path.basename(font_path)}")
+    print(f"🎨 Font: {os.path.basename(font_path)}")
 
-    txt_layer = Image.new("RGBA", img.size, (255, 255, 255, 0))
-    draw = ImageDraw.Draw(txt_layer)
+    layer = Image.new("RGBA", img.size, (255, 255, 255, 0))
+    draw = ImageDraw.Draw(layer)
 
-    # Bungkus teks agar tidak melewati lebar gambar
     max_width = int(width * 0.8)
+    words = teks.split()
     lines, line = [], ""
-    words = teks.split(" ")
 
     for word in words:
-        test_line = line + word + " "
-        bbox = draw.textbbox((0, 0), test_line, font=font)
-        w = bbox[2] - bbox[0]
+        test = line + word + " "
+        w = draw.textbbox((0, 0), test, font=font)[2]
         if w <= max_width:
-            line = test_line
+            line = test
         else:
             lines.append(line)
             line = word + " "
     lines.append(line)
 
-    # Hitung tinggi total teks
-    text_height = sum(
-        draw.textbbox((0, 0), l, font=font)[3] - draw.textbbox((0, 0), l, font=font)[1]
+    total_height = sum(
+        draw.textbbox((0, 0), l, font=font)[3]
         for l in lines
     )
-    y_start = (height - text_height) // 2
 
-    # Gambar teks di tengah gambar
-    for line in lines:
-        bbox = draw.textbbox((0, 0), line, font=font)
+    y = (height - total_height) // 2
+
+    for l in lines:
+        bbox = draw.textbbox((0, 0), l, font=font)
         w = bbox[2] - bbox[0]
         h = bbox[3] - bbox[1]
         x = (width - w) // 2
-        draw.text((x, y_start), line, font=font, fill=text_color)
-        y_start += h
+        draw.text((x, y), l, font=font, fill=text_color)
+        y += h
 
-    hasil = Image.alpha_composite(img, txt_layer)
+    result = Image.alpha_composite(img, layer)
+    # === WAJIB: HILANGKAN ALPHA UNTUK JPG ===
+    result = result.convert("RGB")
 
-    # Simpan hasil
-    random_num = random.randint(1000, 9999)
-    output_path = os.path.join(output_folder, f"teks_{random_num}.png")
-    hasil.save(output_path)
-    print(f"✅ Selesai: {output_path}")
+    output_name = f"quotes{random.randint(1000,9999)}.jpg"
+    output_path = os.path.join(output_folder, output_name)
 
-# === Jalankan looping ===
-for i, tek in enumerate(teks):
-    buat_desain(tek, i)
+    result.save(output_path, "JPEG", quality=95, subsampling=0)
+    print(f"✅ Selesai: {output_name}")
 
-print("\n🎉 Semua desain berhasil dibuat di folder 'output'!")
+
+# === LOOP ===
+for i, teks in enumerate(teks_list):
+    buat_desain(teks, i)
+
+print("\n🎉 Semua desain berhasil dibuat!")
