@@ -1,7 +1,7 @@
 import os, sys
 import random
 from PIL import Image, ImageDraw, ImageFont
-
+# max_width
 # === Clear terminal ===
 if "win" in sys.platform.lower():
     os.system("cls")
@@ -118,7 +118,7 @@ def buat_desain(teks, index):
     layer = Image.new("RGBA", img.size, (255, 255, 255, 0))
     draw = ImageDraw.Draw(layer)
 
-    max_width = int(width * 0.8)
+    max_width = int(width * 0.7)
     words = teks.split()
     lines, line = [], ""
 
@@ -164,4 +164,5 @@ for i, teks in enumerate(teks_list):
     buat_desain(teks, i)
 
 print("\n🎉 Semua desain berhasil dibuat!")
+
 
