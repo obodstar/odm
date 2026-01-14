@@ -55,8 +55,16 @@ except ValueError:
     print("❌ Pilihan tidak valid.")
     exit()
 
+# === NAMA TEMPLATE TANPA EXTENSION ===
+template_name = os.path.splitext(templates[pilihan - 1])[0]
+
+# === PATH TEMPLATE ===
 template_path = os.path.join(template_folder, templates[pilihan - 1])
-print(f"\n✅ Template dipilih: {templates[pilihan - 1]}")
+
+
+# === FOLDER OUTPUT SESUAI TEMPLATE ===
+template_output_folder = os.path.join(output_folder, template_name)
+os.makedirs(template_output_folder, exist_ok=True)
 
 # === Buat teks.txt jika belum ada ===
 if not os.path.exists(teks_file):
@@ -143,8 +151,9 @@ def buat_desain(teks, index):
     # === WAJIB: HILANGKAN ALPHA UNTUK JPG ===
     result = result.convert("RGB")
 
-    output_name = f"quotes{random.randint(1000,9999)}.jpg"
-    output_path = os.path.join(output_folder, output_name)
+    output_name = f"{template_name}{index+1:04d}.jpg"
+    output_path = os.path.join(template_output_folder, output_name)
+
 
     result.save(output_path, "JPEG", quality=95, subsampling=0)
     print(f"✅ Selesai: {output_name}")
@@ -155,3 +164,4 @@ for i, teks in enumerate(teks_list):
     buat_desain(teks, i)
 
 print("\n🎉 Semua desain berhasil dibuat!")
+
